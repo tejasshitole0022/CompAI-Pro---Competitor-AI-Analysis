@@ -1,1 +1,1 @@
-# CompAI-Pro---Competitor-AI-Analysis
+# CompAI-Pro-Competitor-AI-Analysis
