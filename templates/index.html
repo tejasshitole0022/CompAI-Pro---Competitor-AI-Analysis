@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Competitor Gen AI Analyze</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #60368a 100%);
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .fixed-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #667eea 0%, #60368a 100%);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+        
+        .logo {
+            background: white;
+            padding: 8px 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+        
+        .logo img {
+            height: 50px;
+            display: block;
+        }
+        
+        .header {
+            flex: 1;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.2em;
+            margin: 0;
+            font-weight: 700;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            letter-spacing: 0.5px;
+        }
+        
+        .header p {
+            font-size: 1.05em;
+            margin: 5px 0 0 0;
+            color: white;
+            opacity: 0.95;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            font-weight: 300;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 140px 20px 20px 20px;
+        }
+        
+        .input-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        input[type="text"] {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        button {
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: white;
+            font-size: 18px;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error {
+            background: #ff4444;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .results {
+            display: none;
+        }
+        
+        .competitors-section, .recommendations-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .competitor-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .competitor-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .competitor-card a {
+            color: #764ba2;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .recommendations {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            line-height: 1.8;
+            font-size: 15px;
+            color: #333;
+        }
+        
+        .rec-section {
+            margin-bottom: 35px;
+        }
+        
+        .rec-section-title {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 25px;
+            margin: 0 0 20px 0;
+            font-size: 1.4em;
+            border-radius: 10px;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+        }
+        
+        .rec-item {
+            background: #f8f9fa;
+            padding: 20px 25px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .rec-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+        
+        .rec-item-title {
+            color: #667eea;
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .rec-item-content {
+            color: #555;
+            line-height: 1.7;
+        }
+        
+        .rec-item-content strong {
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .priority-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .priority-high {
+            background: #ff4444;
+            color: white;
+        }
+        
+        .priority-medium {
+            background: #ffaa00;
+            color: white;
+        }
+        
+        .priority-low {
+            background: #00cc66;
+            color: white;
+        }
+        
+        .use-case-list {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+        }
+        
+        .use-case-list li {
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 6px;
+            border-left: 3px solid #667eea;
+        }
+        
+        .use-case-list li:before {
+            content: "✓";
+            color: #667eea;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            padding: 20px;
+            margin-top: 40px;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="fixed-header">
+        <div class="logo">
+            <img src="{{ url_for('static', filename='comprinnotech_logo.jpg') }}" alt="Company Logo">
+        </div>
+        <div class="header">
+            <h1>🚀 Comprinno's - Competitor Gen AI Analyzer</h1>
+            <p>Discover what Gen AI features your competitors are using</p>
+        </div>
+    </div>
+    
+    <div class="container">
+        
+        <div class="input-section">
+            <div class="input-group">
+                <input type="text" id="companyUrl" placeholder="Enter company URL (e.g., samsung.com)" />
+                <button onclick="analyzeCompetitors()">Analyze</button>
+            </div>
+            <p style="color: #666; font-size: 14px;">Enter a company URL to find competitors and analyze their Gen AI implementations</p>
+        </div>
+        
+        <div class="error" id="error"></div>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Analyzing competitors and extracting insights...</p>
+        </div>
+        
+        <div class="results" id="results">
+            <div class="competitors-section">
+                <h2 class="section-title">📊 Competitors Found</h2>
+                <div id="competitorsList"></div>
+            </div>
+            
+            <div class="recommendations-section">
+                <h2 class="section-title">💡 Gen AI Recommendations</h2>
+                <div class="recommendations" id="recommendations"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>&copy; 2026 Comprinno Technology. All rights reserved.</p>
+    </div>
+    
+    <script>
+        async function analyzeCompetitors() {
+            const url = document.getElementById('companyUrl').value.trim();
+            
+            if (!url) {
+                showError('Please enter a company URL');
+                return;
+            }
+            
+            hideError();
+            showLoading();
+            hideResults();
+            
+            try {
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ company_url: url })
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || 'Analysis failed');
+                }
+                
+                displayResults(data);
+                
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        function displayResults(data) {
+            // Display competitors
+            const competitorsList = document.getElementById('competitorsList');
+            competitorsList.innerHTML = data.competitors.map(comp => `
+                <div class="competitor-card">
+                    <h3>${comp.name}</h3>
+                    <p><a href="${comp.url}" target="_blank">${comp.url}</a></p>
+                </div>
+            `).join('');
+            
+            // Display recommendations with simple formatting
+            const recommendations = document.getElementById('recommendations');
+            const formattedText = formatRecommendations(data.recommendations.analysis);
+            recommendations.innerHTML = formattedText;
+            
+            showResults();
+        }
+        
+        function formatRecommendations(text) {
+            const sections = text.split(/(?=\d+\.\s+[A-Z])/);
+            let html = '';
+            
+            sections.forEach(section => {
+                if (!section.trim()) return;
+                
+                // Extract section title (e.g., "1. List of Generative AI Use Cases")
+                const titleMatch = section.match(/^(\d+)\.\s+(.+?)(?:\n|$)/);
+                if (!titleMatch) return;
+                
+                const sectionTitle = titleMatch[2].trim();
+                let content = section.substring(titleMatch[0].length).trim();
+                
+                html += `<div class="rec-section">`;
+                html += `<div class="rec-section-title">${sectionTitle}</div>`;
+                
+                // Split content by items starting with **
+                const items = content.split(/(?=\*\*[^*]+:\*\*)/);
+                
+                items.forEach(item => {
+                    if (!item.trim()) return;
+                    
+                    // Extract item title
+                    const itemMatch = item.match(/\*\*([^*]+):\*\*/);
+                    if (!itemMatch) return;
+                    
+                    const itemTitle = itemMatch[1].trim();
+                    let itemContent = item.substring(itemMatch[0].length).trim();
+                    
+                    // Check for priority
+                    let priorityBadge = '';
+                    const priorityMatch = itemContent.match(/Priority:\s*(High|Medium|Low)/i);
+                    if (priorityMatch) {
+                        const priority = priorityMatch[1].toLowerCase();
+                        priorityBadge = `<span class="priority-badge priority-${priority}">${priorityMatch[1]}</span>`;
+                    }
+                    
+                    // Format bullet points as list
+                    if (itemContent.includes('\n-') || itemContent.includes('\n•')) {
+                        const parts = itemContent.split(/\n[-•]\s+/);
+                        const intro = parts[0].trim();
+                        const bullets = parts.slice(1).filter(b => b.trim());
+                        
+                        itemContent = intro;
+                        if (bullets.length > 0) {
+                            itemContent += '<ul class="use-case-list">';
+                            bullets.forEach(bullet => {
+                                itemContent += `<li>${bullet.trim()}</li>`;
+                            });
+                            itemContent += '</ul>';
+                        }
+                    } else {
+                        // Format paragraphs
+                        itemContent = itemContent
+                            .split('\n\n')
+                            .map(p => p.trim())
+                            .filter(p => p)
+                            .map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`)
+                            .join('');
+                    }
+                    
+                    // Format field labels (Description:, Implementation:, etc.)
+                    itemContent = itemContent.replace(/\b(Description|Implementation|Expected Impact|Priority):/g, '<strong>$1:</strong>');
+                    
+                    html += `
+                        <div class="rec-item">
+                            <div class="rec-item-title">
+                                ${itemTitle}
+                                ${priorityBadge}
+                            </div>
+                            <div class="rec-item-content">
+                                ${itemContent}
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += `</div>`;
+            });
+            
+            return html;
+        }
+        
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+        }
+        
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+        
+        function showResults() {
+            document.getElementById('results').style.display = 'block';
+        }
+        
+        function hideResults() {
+            document.getElementById('results').style.display = 'none';
+        }
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+        
+        function hideError() {
+            document.getElementById('error').style.display = 'none';
+        }
+        
+        // Allow Enter key to submit
+        document.getElementById('companyUrl').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                analyzeCompetitors();
+            }
+        });
+    </script>
+</body>
+</html>
