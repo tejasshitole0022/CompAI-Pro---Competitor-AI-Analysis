@@ -290,7 +290,15 @@
             background: white;
             border-radius: 6px;
             border-left: 3px solid #667eea;
+            opacity: 0;
+            animation: fadeInUp 0.5s forwards;
         }
+        
+        .use-case-list li:nth-child(1) { animation-delay: 0.1s; }
+        .use-case-list li:nth-child(2) { animation-delay: 0.2s; }
+        .use-case-list li:nth-child(3) { animation-delay: 0.3s; }
+        .use-case-list li:nth-child(4) { animation-delay: 0.4s; }
+        .use-case-list li:nth-child(5) { animation-delay: 0.5s; }
         
         .use-case-list li:before {
             content: "✓";
@@ -298,6 +306,41 @@
             font-weight: bold;
             margin-right: 10px;
         }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .rec-item {
+            opacity: 0;
+            animation: fadeInUp 0.6s forwards;
+        }
+        
+        .rec-item:nth-child(1) { animation-delay: 0.1s; }
+        .rec-item:nth-child(2) { animation-delay: 0.2s; }
+        .rec-item:nth-child(3) { animation-delay: 0.3s; }
+        .rec-item:nth-child(4) { animation-delay: 0.4s; }
+        .rec-item:nth-child(5) { animation-delay: 0.5s; }
+        .rec-item:nth-child(6) { animation-delay: 0.6s; }
+        .rec-item:nth-child(7) { animation-delay: 0.7s; }
+        
+        .competitor-card {
+            opacity: 0;
+            animation: fadeInUp 0.5s forwards;
+        }
+        
+        .competitor-card:nth-child(1) { animation-delay: 0.1s; }
+        .competitor-card:nth-child(2) { animation-delay: 0.2s; }
+        .competitor-card:nth-child(3) { animation-delay: 0.3s; }
+        .competitor-card:nth-child(4) { animation-delay: 0.4s; }
+        .competitor-card:nth-child(5) { animation-delay: 0.5s; }
         
         .footer {
             text-align: center;
@@ -453,11 +496,12 @@
                         const intro = parts[0].trim();
                         const bullets = parts.slice(1).filter(b => b.trim());
                         
-                        itemContent = intro;
+                        itemContent = intro ? `<p>${intro}</p>` : '';
                         if (bullets.length > 0) {
                             itemContent += '<ul class="use-case-list">';
                             bullets.forEach(bullet => {
-                                itemContent += `<li>${bullet.trim()}</li>`;
+                                const cleanBullet = bullet.trim().replace(/\*\*/g, '');
+                                itemContent += `<li>${cleanBullet}</li>`;
                             });
                             itemContent += '</ul>';
                         }
